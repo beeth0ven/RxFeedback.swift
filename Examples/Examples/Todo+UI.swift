@@ -44,7 +44,11 @@ class TodoViewController: UIViewController {
 
         Todo.system(
             initialState: Todo.for(tasks: tasks),
-            ui: bindings, synchronizeTask: synchronize)
+//            ui: bindings,
+            synchronizeTask: synchronize
+            )
+            .concat(bindings)
+            .system([])
             .drive()
             .disposed(by: disposeBag)
 

@@ -27,37 +27,66 @@ class CounterViewController: UIViewController {
             case increment
             case decrement
         }
+        
+        
+//        Observable.system(
+//            initialState: 0,
+//            reduce: { (state, event) -> State in
+//                switch event {
+//                case .increment:
+//                    return state + 1
+//                case .decrement:
+//                    return state - 1
+//                }
+//            },
+//            scheduler: MainScheduler.instance,
+//            feedback:
+//                // UI is user feedback
+//                bind(self) { me, state -> Bindings<Event> in
+//                    let subscriptions = [
+//                        state.map(String.init).bind(to: me.label!.rx.text)
+//                    ]
+//
+//                    let events = [
+//                        me.plus!.rx.tap.map { Event.increment },
+//                        me.minus!.rx.tap.map { Event.decrement }
+//                    ]
+//
+//                    return Bindings(subscriptions: subscriptions,
+//                                    events: events)
+//                }
+//            )
+//            .subscribe()
+//            .disposed(by: disposeBag)
 
-        Observable.system(
+        ObservableSystem.create(
             initialState: 0,
-            reduce: { (state, event) -> State in
+            reduce: { (state, event: Event) -> State in
                 switch event {
                 case .increment:
                     return state + 1
                 case .decrement:
                     return state - 1
                 }
-            },
-            scheduler: MainScheduler.instance,
-            feedback:
-                // UI is user feedback
-                bind(self) { me, state -> Bindings<Event> in
-                    let subscriptions = [
-                        state.map(String.init).bind(to: me.label!.rx.text)
-                    ]
-
-                    let events = [
-                        me.plus!.rx.tap.map { Event.increment },
-                        me.minus!.rx.tap.map { Event.decrement }
-                    ]
-
-                    return Bindings(subscriptions: subscriptions,
-                                    events: events)
-                }
+        },
+            scheduler: MainScheduler.instance
             )
+            .binded(self) { me, state -> Bindings<Event> in
+                let subscriptions = [
+                    state.map(String.init).bind(to: me.label!.rx.text)
+                ]
+                
+                let events = [
+                    me.plus!.rx.tap.map { Event.increment },
+                    me.minus!.rx.tap.map { Event.decrement }
+                ]
+                
+                return Bindings(subscriptions: subscriptions,
+                                events: events)
+            }
+            .system([])
             .subscribe()
             .disposed(by: disposeBag)
-
     }
 }
 

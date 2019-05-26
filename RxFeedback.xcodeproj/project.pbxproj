@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1E2F2DE02201DCFF00DEEE9C /* ReactWithLatestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2F2DDF2201DCFF00DEEE9C /* ReactWithLatestTests.swift */; };
+		45E7E1E62298DA8B000EEE93 /* ObservableSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E7E1E52298DA8B000EEE93 /* ObservableSystem.swift */; };
+		45E7E1E92298DF9B000EEE93 /* DriverSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E7E1E82298DF9B000EEE93 /* DriverSystem.swift */; };
 		52D6D9871BEFF229002C0205 /* RxFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D6D97C1BEFF229002C0205 /* RxFeedback.framework */; };
 		C834A8691EB6795F00E6B15E /* ObservableType+RxFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = C834A8681EB6795F00E6B15E /* ObservableType+RxFeedback.swift */; };
 		C83596441FB22EE900DC7B8F /* ReactEquatableLoopsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83596431FB22EE900DC7B8F /* ReactEquatableLoopsTests.swift */; };
@@ -35,6 +37,8 @@
 
 /* Begin PBXFileReference section */
 		1E2F2DDF2201DCFF00DEEE9C /* ReactWithLatestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactWithLatestTests.swift; sourceTree = "<group>"; };
+		45E7E1E52298DA8B000EEE93 /* ObservableSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableSystem.swift; sourceTree = "<group>"; };
+		45E7E1E82298DF9B000EEE93 /* DriverSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DriverSystem.swift; sourceTree = "<group>"; };
 		52D6D97C1BEFF229002C0205 /* RxFeedback.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RxFeedback.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6D9861BEFF229002C0205 /* RxFeedbackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RxFeedbackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8047ABB1F41099F0089721B /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
@@ -123,6 +127,8 @@
 				C89B96241EB6964200BDAB24 /* Feedbacks.swift */,
 				C8996C791F40C5B6004E5D83 /* Deprecations.swift */,
 				C8DF7345218F389200945A7C /* AsyncSynchronized.swift */,
+				45E7E1E52298DA8B000EEE93 /* ObservableSystem.swift */,
+				45E7E1E82298DF9B000EEE93 /* DriverSystem.swift */,
 			);
 			name = RxFeedback;
 			path = Sources/RxFeedback;
@@ -310,7 +316,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45E7E1E62298DA8B000EEE93 /* ObservableSystem.swift in Sources */,
 				C89B96251EB6964200BDAB24 /* Feedbacks.swift in Sources */,
+				45E7E1E92298DF9B000EEE93 /* DriverSystem.swift in Sources */,
 				C8DF7346218F389200945A7C /* AsyncSynchronized.swift in Sources */,
 				C8996C7A1F40C5B6004E5D83 /* Deprecations.swift in Sources */,
 				C834A8691EB6795F00E6B15E /* ObservableType+RxFeedback.swift in Sources */,

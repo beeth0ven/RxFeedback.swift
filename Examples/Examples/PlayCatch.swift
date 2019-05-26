@@ -32,21 +32,46 @@ class PlayCatchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let bindUI: (ObservableSchedulerContext<State>) -> Observable<Event> = bind(self) { me, state in
-            let subscriptions = [
-                state.map { $0.myStateOfMind }.bind(to: me.myLabel!.rx.text),
-                state.map { $0.machineStateOfMind }.bind(to: me.machinesLabel!.rx.text),
-                state.map { !$0.doIHaveTheBall }.bind(to: me.throwTheBallButton!.rx.isHidden),
-            ]
-
-            let events = [
-                me.throwTheBallButton!.rx.tap.map { Event.throwToMachine }
-            ]
-
-            return Bindings(subscriptions: subscriptions, events: events)
-        }
-
-        Observable.system(
+//        let bindUI: (ObservableSchedulerContext<State>) -> Observable<Event> = bind(self) { me, state in
+//            let subscriptions = [
+//                state.map { $0.myStateOfMind }.bind(to: me.myLabel!.rx.text),
+//                state.map { $0.machineStateOfMind }.bind(to: me.machinesLabel!.rx.text),
+//                state.map { !$0.doIHaveTheBall }.bind(to: me.throwTheBallButton!.rx.isHidden),
+//            ]
+//
+//            let events = [
+//                me.throwTheBallButton!.rx.tap.map { Event.throwToMachine }
+//            ]
+//
+//            return Bindings(subscriptions: subscriptions, events: events)
+//        }
+        
+//        Observable.system(
+//            initialState: State.humanHasIt,
+//            reduce: { (state: State, event: Event) -> State in
+//                switch event {
+//                case .throwToMachine:
+//                    return .machineHasIt
+//                case .throwToHuman:
+//                    return .humanHasIt
+//                }
+//            },
+//            scheduler: MainScheduler.instance,
+//            feedback:
+//                // UI is human feedback
+//                bindUI,
+//                // NoUI, machine feedback
+//                react(request: { $0.machinePitching }, effects: { (_) -> Observable<Event> in
+//                    return Observable<Int>
+//                        .timer(.seconds(1), scheduler: MainScheduler.instance)
+//                        .map { _ in Event.throwToHuman }
+//                })
+//        )
+//        .subscribe()
+//        .disposed(by: disposeBag)
+        
+        
+        ObservableSystem.create(
             initialState: State.humanHasIt,
             reduce: { (state: State, event: Event) -> State in
                 switch event {
@@ -55,20 +80,31 @@ class PlayCatchViewController: UIViewController {
                 case .throwToHuman:
                     return .humanHasIt
                 }
-            },
-            scheduler: MainScheduler.instance,
-            feedback:
-                // UI is human feedback
-                bindUI,
-                // NoUI, machine feedback
-                react(request: { $0.machinePitching }, effects: { (_) -> Observable<Event> in
-                    return Observable<Int>
-                        .timer(.seconds(1), scheduler: MainScheduler.instance)
-                        .map { _ in Event.throwToHuman }
-                })
-        )
-        .subscribe()
-        .disposed(by: disposeBag)
+        },
+            scheduler: MainScheduler.instance
+            )
+            .binded(self) { me, state in
+                let subscriptions = [
+                    state.map { $0.myStateOfMind }.bind(to: me.myLabel!.rx.text),
+                    state.map { $0.machineStateOfMind }.bind(to: me.machinesLabel!.rx.text),
+                    state.map { !$0.doIHaveTheBall }.bind(to: me.throwTheBallButton!.rx.isHidden),
+                ]
+                
+                let events = [
+                    me.throwTheBallButton!.rx.tap.map { Event.throwToMachine }
+                ]
+                
+                return Bindings(subscriptions: subscriptions, events: events)
+            }
+            .reacted(request: { $0.machinePitching }, effects: { (_) -> Observable<Event> in
+                return Observable<Int>
+                    .timer(.seconds(1), scheduler: MainScheduler.instance)
+                    .map { _ in Event.throwToHuman }
+            })
+            .system([])
+            .subscribe()
+            .disposed(by: disposeBag)
+
     }
 }
 

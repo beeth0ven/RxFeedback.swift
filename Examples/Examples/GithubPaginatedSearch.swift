@@ -122,36 +122,65 @@ class GithubPaginatedSearchViewController: UIViewController {
             }
         }
 
-        let bindUI: (Driver<State>) -> Signal<Event> = bind(self) { me, state in
-            let subscriptions = [
-                state.map { $0.search }.drive(me.searchText!.rx.text),
-                state.map { $0.lastError?.displayMessage }.drive(me.status!.rx.textOrHide),
-                state.map { $0.results }.drive(searchResults.rx.items)(configureCell),
-
-                state.map { $0.loadNextPage?.description }.drive(me.loadNextPage!.rx.textOrHide),
-                ]
-
-            let events: [Signal<Event>] = [
-                me.searchText!.rx.text.orEmpty.changed.asSignal().map(Event.searchChanged),
-                triggerLoadNextPage(state)
-            ]
-
-            return Bindings(subscriptions: subscriptions, events: events)
-        }
-
-        Driver.system(
-                initialState: State.empty,
-                reduce: State.reduce,
-                feedback:
-                    // UI, user feedback
-                    bindUI,
-                    // NoUI, automatic feedback
-                    react(request: { $0.loadNextPage }, effects: { resource in
-                        return URLSession.shared.loadRepositories(resource: resource)
-                            .asSignal(onErrorJustReturn: .failure(.offline))
-                            .map(Event.response)
-                    })
+//        let bindUI: (Driver<State>) -> Signal<Event> = bind(self) { me, state in
+//            let subscriptions = [
+//                state.map { $0.search }.drive(me.searchText!.rx.text),
+//                state.map { $0.lastError?.displayMessage }.drive(me.status!.rx.textOrHide),
+//                state.map { $0.results }.drive(searchResults.rx.items)(configureCell),
+//
+//                state.map { $0.loadNextPage?.description }.drive(me.loadNextPage!.rx.textOrHide),
+//                ]
+//
+//            let events: [Signal<Event>] = [
+//                me.searchText!.rx.text.orEmpty.changed.asSignal().map(Event.searchChanged),
+//                triggerLoadNextPage(state)
+//            ]
+//
+//            return Bindings(subscriptions: subscriptions, events: events)
+//        }
+        
+//        Driver.system(
+//                initialState: State.empty,
+//                reduce: State.reduce,
+//                feedback:
+//                    // UI, user feedback
+//                    bindUI,
+//                    // NoUI, automatic feedback
+//                    react(request: { $0.loadNextPage }, effects: { resource in
+//                        return URLSession.shared.loadRepositories(resource: resource)
+//                            .asSignal(onErrorJustReturn: .failure(.offline))
+//                            .map(Event.response)
+//                    })
+//            )
+//            .drive()
+//            .disposed(by: disposeBag)
+        
+        DriverSystem.create(
+            initialState: State.empty,
+            reduce: State.reduce
             )
+            .binded(self) { me, state in
+                let subscriptions = [
+                    state.map { $0.search }.drive(me.searchText!.rx.text),
+                    state.map { $0.lastError?.displayMessage }.drive(me.status!.rx.textOrHide),
+                    state.map { $0.results }.drive(searchResults.rx.items)(configureCell),
+                    
+                    state.map { $0.loadNextPage?.description }.drive(me.loadNextPage!.rx.textOrHide),
+                ]
+                
+                let events: [Signal<Event>] = [
+                    me.searchText!.rx.text.orEmpty.changed.asSignal().map(Event.searchChanged),
+                    triggerLoadNextPage(state)
+                ]
+                
+                return Bindings(subscriptions: subscriptions, events: events)
+            }
+            .reacted(request: { $0.loadNextPage }, effects: { resource in
+                return URLSession.shared.loadRepositories(resource: resource)
+                    .asSignal(onErrorJustReturn: .failure(.offline))
+                    .map(Event.response)
+            })
+            .system([])
             .drive()
             .disposed(by: disposeBag)
     }
